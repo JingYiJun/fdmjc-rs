@@ -1,0 +1,38 @@
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+NEWLINE    = _{ "\r\n" | "\n" | "\r" }
+COMMENT    = _{
+    "//" ~ (!NEWLINE ~ ANY)*
+  | "/*" ~ (!"*/" ~ ANY)* ~ "*/"
+}
+
+DecimalInteger = _{ "0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT* }
+Int            = ${ DecimalInteger }
+
+Num = _{ Int }
+
+Id = ${ (ASCII_ALPHA | "_") ~ (ASCII_DIGIT | ASCII_ALPHA | "_")* }
+
+Add = { "+" }
+Sub = { "-" }
+Mul = { "*" }
+Div = { "/" }
+
+Neg = { "-" }
+
+BinOp = _{ Add | Sub | Mul | Div }
+
+UnOp = _{ Neg }
+
+EscExpr =  { "(" ~ "{" ~ Stmts ~ "}" ~ Expr ~ ")" }
+Primary = _{ "(" ~ Expr ~ ")" | Num | Id | EscExpr }
+Atom    = _{ UnOp* ~ Primary }
+Expr    =  { Atom ~ (BinOp ~ Atom)* }
+
+AssignStmt = { Id ~ "=" ~ Expr ~ ";" }
+PutIntStmt = { "putint" ~ "(" ~ Expr ~ ("," ~ Expr)* ~ ","? ~ ")" ~ ";" }
+PutChStmt  = { "putch" ~ "(" ~ Expr ~ ")" ~ ";" }
+
+Stmt  = { AssignStmt | PutIntStmt | PutChStmt }
+Stmts = { Stmt* }
+
+Program = _{ SOI ~ "public" ~ "int" ~ "main" ~ "(" ~ ")" ~ "{" ~ Stmts ~ "}" ~ EOI }

@@ -1,0 +1,9 @@
+[tasks.test-fdmj]
+script_runner = "@duckscript"
+script = """
+test_files = glob_array tests/*.fdmj
+for file in ${test_files}
+    raw = replace ${file} ".fdmj" ""
+    exec cargo run --bin fdmjc -- ${file}
+end
+"""
