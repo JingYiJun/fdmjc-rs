@@ -28,3 +28,7 @@ cargo make test-fdmj
 ```
 
 会在 tests 文件夹内出现 *.ll *.ll.ll *.output，没有写 xml 的输出，其他的应该是跟 hw1 一样。
+
+## 参考
+
+- [SysYc: Compiler of Sysy2022](https://github.com/rrvm-project/SysYc)
