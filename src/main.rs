@@ -29,7 +29,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let pair = FDMJParser::parse(Rule::Program, &mut program_source)?.next().unwrap();
     let program = Program::parse(pair);
     let mut s = String::new();
-    program.generate(&mut s);
+    program.generate(&mut s)?;
 
     // generate .ll file
     let mut file_ll = File::create(file_ll)?;

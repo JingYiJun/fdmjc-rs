@@ -23,7 +23,6 @@ lazy_static! {
 
 impl Expr {
     pub fn parse(pair: Pair<Rule>) -> Self {
-        let inner = pair.into_inner();
         PRATT_PARSER
             .map_primary(|pair| match pair.as_rule() {
                 Rule::Int => Expr::Int(pair.as_str().parse().unwrap()),
@@ -58,7 +57,7 @@ impl Expr {
                 },
                 expr: Box::new(rhs),
             })
-            .parse(inner)
+            .parse(pair.into_inner())
     }
 }
 

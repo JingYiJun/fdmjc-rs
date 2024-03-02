@@ -1,9 +1,30 @@
+[tasks.clean-fdmj]
+script = """
+rm -f tests/*.ll tests/*.output
+"""
+
+[tasks.build-fdmj]
+script = """
+cargo build --bin fdmjc
+clang -S -emit-llvm vendor/libsysy64.c -o target/debug/libsysy64.ll
+"""
+dependencies = ["clean-fdmj"]
+
 [tasks.test-fdmj]
 script_runner = "@duckscript"
 script = """
 test_files = glob_array tests/*.fdmj
 for file in ${test_files}
-    raw = replace ${file} ".fdmj" ""
-    exec cargo run --bin fdmjc -- ${file}
+    raw_path = replace ${file} ".fdmj" ""
+    filename = basename ${raw_path}
+    echo ${filename}
+    exec ./target/debug/fdmjc ${file}
+    exec llvm-link ${raw_path}.ll target/debug/libsysy64.ll -o ${raw_path}.ll.ll
+    output = exec lli ${raw_path}.ll.ll
+    echo ${output.code}
+    if equals ${output.code} 0
+        write_text_file ${raw_path}.output ${output.stdout}
+    end
 end
 """
+dependencies = ["build-fdmj"]
